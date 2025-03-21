@@ -639,12 +639,12 @@
 
 &cdn_dp {
 	status = "okay";
-	extcon = <&fusb0>;
+	extcon = <&usbc0>;
 	phys = <&tcphy0_dp>;
 };
 
 &tcphy0 {
-	extcon = <&fusb0>;
+	extcon = <&usbc0>;
 	status = "okay";
 };
 
@@ -670,7 +670,7 @@
 
 &u2phy0 {
 	status = "okay";
-	extcon = <&fusb0>;
+	extcon = <&usbc0>;
 
 	u2phy0_otg: otg-port {
 		status = "okay";
@@ -723,7 +723,7 @@
 
 &usbdrd_dwc3_0 {
 	status = "okay";
-	extcon = <&fusb0>;
+	extcon = <&usbc0>;
 	dr_mode = "otg";
 };
 
