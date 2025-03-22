@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (c) 2025 kaixinos <kaixinos@outlook.com>
+ */
 
 /dts-v1/;
 #include <dt-bindings/input/linux-event-codes.h>
@@ -149,7 +152,6 @@
 			press-threshold-microvolt = <1750>;
 		};
 	};
-
 
 	clkin_gmac: external-gmac-clock {
 		compatible = "fixed-clock";
@@ -595,7 +597,6 @@
 	rockchip,hw-tshut-polarity = <1>;
 };
 
-
 &emmc_phy {
 	status = "okay";
 };
@@ -610,12 +611,12 @@
 };
 
 &sdmmc {
+	max-frequency = <150000000>;
+	clock-frequency = <150000000>;
 	bus-width = <4>;
 	cap-mmc-highspeed;
 	cap-sd-highspeed;
 	disable-wp;
-	max-frequency = <150000000>;
-	clock-frequency = <150000000>;
 	sd-uhs-sdr104;
 	pinctrl-names = "default";
 	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_bus4 &sdmmc0_det_l>;
