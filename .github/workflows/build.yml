@@ -207,6 +207,7 @@ jobs:
             ### Armbian Image information
             - Default username: root
             - Default password: 1234
+            - Change apt source: armbian-apt
             - Config command: armbian-config
             - Upgrade command: armbian-upgrade
             - Install command: armbian-install
