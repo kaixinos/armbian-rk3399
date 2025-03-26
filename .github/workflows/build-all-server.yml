@@ -1,0 +1,146 @@
+name: build-all-server
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Armbian Version'
+        required: true
+        type: choice
+        options:
+          - v25.02
+          - v24.11
+          - main
+        default: v25.02
+
+      branch:
+        description: 'Branch'
+        required: true
+        type: choice
+        options:
+          - current
+          - edge
+          - vendor
+        default: current
+
+      bspfreeze:
+        description: 'Freeze BSP'
+        required: false
+        type: choice
+        options:
+          - 'yes'
+          - 'no'
+        default: 'yes'
+
+      vendor:
+        description: 'Vendor'
+        required: false
+        type: choice
+        options:
+          - Armbian
+          - Armbian-unofficial
+        default: Armbian
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    strategy:
+      matrix:
+        board:
+          - rk-sapphire
+          - fmx1
+          - nanopim4v2
+          - rock-4b
+        release:
+          - bookworm
+          - jammy
+          - noble
+
+    steps:
+
+      - name: Free disk space
+        run: |
+          echo "Disk space before cleanup:"
+          df -h
+          sudo rm -rf /usr/local/.ghcup
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /usr/local/lib/android/sdk/ndk
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/share/boost
+          sudo apt-get clean
+          echo "Disk space after cleanup:"
+          df -h
+
+      - name: Install required packages
+        run: |
+          sudo apt update
+          sudo apt install -y neofetch
+
+      - name: Show host info
+        run: |
+          neofetch --off --color_blocks off --stdout
+
+          echo -e "\033[32mCPU info:\033[0m"
+          lscpu
+
+          echo -e "\033[32mMemory info:\033[0m"
+          free -h
+
+          echo -e "\033[32mDisk space info:\033[0m"
+          df -hT ${PWD}
+
+      - name: Checkout targets
+        uses: actions/checkout@v4
+
+      - name: Checkout armbian
+        run: |
+          git clone -q --single-branch --depth=1 --branch=${{ inputs.version }} https://github.com/armbian/build.git
+
+      - name: Copy targets
+        run: |
+          cp -rvf userpatches build/
+
+      - name: Build [ ${{ matrix.board }} - ${{ matrix.release }} - ${{ inputs.branch }} ]
+        run: |
+          pushd build
+          ./compile.sh build BOARD=${{ matrix.board }} \
+          BRANCH=${{ inputs.branch }} \
+          BUILD_DESKTOP=no BUILD_MINIMAL=no \
+          KERNEL_CONFIGURE=no \
+          RELEASE=${{ matrix.release }} \
+          COMPRESS_OUTPUTIMAGE=sha,img,xz \
+          BSPFREEZE=${{ inputs.bspfreeze }} \
+          VENDOR=${{ inputs.vendor }}
+          popd
+
+      - name: Show remaining space
+        run: |
+          df -hT ${PWD}
+
+      - name: Show images
+        run: |
+          ls -lh ${{ github.workspace }}/build/output/images
+          echo "buildtime=$(date +"%Y.%m")" >> $GITHUB_ENV
+
+      - name: Upload images
+        uses: ncipollo/release-action@main
+        if: success()
+        with:
+          tag: "${{ inputs.vendor }}_${{ inputs.version }}_${{ matrix.release }}_${{ inputs.branch }}_${{ env.buildtime }}"
+          artifacts: "${{ github.workspace }}/build/output/images/*"
+          allowUpdates: true
+          removeArtifacts: false
+          replacesArtifacts: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            ### Armbian Image information
+            - Default username: root
+            - Default password: 1234
+            - Change apt source: armbian-apt
+            - Config command: armbian-config
+            - Upgrade command: armbian-upgrade
+            - Install command: armbian-install
+          draft: false
+          prerelease: false
