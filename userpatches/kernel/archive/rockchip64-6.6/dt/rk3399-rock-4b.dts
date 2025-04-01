@@ -15,9 +15,10 @@
 	compatible = "radxa,rock-4b", "rockchip,rk3399";
 
 	aliases {
-		mmc0 = &sdmmc;
-		mmc1 = &sdhci;
-		mmc2 = &sdio0;
+		ethernet0 = &gmac;
+		mmc0 = &sdio0;
+		mmc1 = &sdmmc;
+		mmc2 = &sdhci;
 	};
 
 	chosen {
@@ -520,6 +521,7 @@
 };
 
 &uart0 {
+	status = "okay";
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart0_xfer &uart0_cts &uart0_rts>;
 
@@ -727,10 +729,17 @@
 	status = "okay";
 };
 
-&hdmi_sound {
+&hdmi_in_vopb {
 	status = "okay";
 };
 
+&hdmi_in_vopl {
+	status = "disabled";
+};
+
+&hdmi_sound {
+	status = "okay";
+};
 
 &i2s0 {
 	pinctrl-0 = <&i2s0_2ch_bus>;
@@ -749,8 +758,7 @@
 };
 
 &i2s1 {
-	rockchip,playback-channels = <2>;
-	rockchip,capture-channels = <2>;
+	status = "disabled";
 };
 
 &i2s2 {
@@ -814,26 +822,6 @@
 		};
 	};
 
-	sdio0 {
-		sdio0_bus4: sdio0-bus4 {
-			rockchip,pins =
-				<2 RK_PC4 1 &pcfg_pull_up_20ma>,
-				<2 RK_PC5 1 &pcfg_pull_up_20ma>,
-				<2 RK_PC6 1 &pcfg_pull_up_20ma>,
-				<2 RK_PC7 1 &pcfg_pull_up_20ma>;
-		};
-
-		sdio0_cmd: sdio0-cmd {
-			rockchip,pins =
-				<2 RK_PD0 1 &pcfg_pull_up_20ma>;
-		};
-
-		sdio0_clk: sdio0-clk {
-			rockchip,pins =
-				<2 RK_PD1 1 &pcfg_pull_none_20ma>;
-		};
-	};
-
 	wifi {
 		wifi_enable_h: wifi-enable-h {
 			rockchip,pins =
@@ -869,6 +857,27 @@
 				<2 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
+
+	sdio0 {
+		sdio0_bus4: sdio0-bus4 {
+			rockchip,pins =
+				<2 RK_PC4 1 &pcfg_pull_up_20ma>,
+				<2 RK_PC5 1 &pcfg_pull_up_20ma>,
+				<2 RK_PC6 1 &pcfg_pull_up_20ma>,
+				<2 RK_PC7 1 &pcfg_pull_up_20ma>;
+		};
+
+		sdio0_cmd: sdio0-cmd {
+			rockchip,pins =
+				<2 RK_PD0 1 &pcfg_pull_up_20ma>;
+		};
+
+		sdio0_clk: sdio0-clk {
+			rockchip,pins =
+				<2 RK_PD1 1 &pcfg_pull_none_20ma>;
+		};
+	};
+
 
 	es8316 {
 		hp_detect: hp-detect {
