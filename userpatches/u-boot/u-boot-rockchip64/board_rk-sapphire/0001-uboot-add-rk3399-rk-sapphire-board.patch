@@ -1,4 +1,4 @@
-From 350c9163e8c7707e5c28904fb8bed1ceee0f1174 Mon Sep 17 00:00:00 2001
+From 0c08e0fc920ef8ae240b9d986bf95d92c1cf6e4b Mon Sep 17 00:00:00 2001
 From: foo <foo@bar.com>
 Date: Fri, 22 Nov 2024 23:30:58 +0800
 Subject: [PATCH] uboot add rk3399 rk-sapphire board
@@ -28,13 +28,13 @@ index ee615e39..2e07d358 100644
  	rk3399-kobol-helios64.dtb \
 diff --git a/arch/arm/dts/rk3399-rk-sapphire-u-boot.dtsi b/arch/arm/dts/rk3399-rk-sapphire-u-boot.dtsi
 new file mode 100644
-index 00000000..fa0ac069
+index 00000000..6b9030aa
 --- /dev/null
 +++ b/arch/arm/dts/rk3399-rk-sapphire-u-boot.dtsi
 @@ -0,0 +1,17 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ * Copyright (c) kaixinos <kaixinos@outlook.com>
++ * Copyright (C) kaixinos <kaixinos@outlook.com>
 + */
 +
 +#include "rk3399-u-boot.dtsi"
@@ -51,13 +51,13 @@ index 00000000..fa0ac069
 +};
 diff --git a/arch/arm/dts/rk3399-rk-sapphire.dts b/arch/arm/dts/rk3399-rk-sapphire.dts
 new file mode 100644
-index 00000000..b5a41065
+index 00000000..01d6e1e1
 --- /dev/null
 +++ b/arch/arm/dts/rk3399-rk-sapphire.dts
 @@ -0,0 +1,740 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
-+ * Copyright (c) 2025 kaixinos <kaixinos@outlook.com>
++ * Copyright (C) 2025 kaixinos <kaixinos@outlook.com>
 + */
 +
 +/dts-v1/;

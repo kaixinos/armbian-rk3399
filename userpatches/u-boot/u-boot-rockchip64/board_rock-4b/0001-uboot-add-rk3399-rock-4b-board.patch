@@ -1,4 +1,4 @@
-From 5f29509648f5e5103d3b383c23f95b426b355b44 Mon Sep 17 00:00:00 2001
+From 689e3a5d6dcdd2697897e74c9b5a0d202058cdb2 Mon Sep 17 00:00:00 2001
 From: foo <foo@bar.com>
 Date: Sat, 23 Nov 2024 00:41:10 +0800
 Subject: [PATCH] uboot add rk3399 rock-4b board
@@ -71,13 +71,13 @@ index 00000000..bd8c60b4
 +};
 diff --git a/arch/arm/dts/rk3399-rock-4b.dts b/arch/arm/dts/rk3399-rock-4b.dts
 new file mode 100644
-index 00000000..7588dc57
+index 00000000..5f041741
 --- /dev/null
 +++ b/arch/arm/dts/rk3399-rock-4b.dts
 @@ -0,0 +1,704 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
-+ * Copyright (c) 2025 kaixinos <kaixinos@outlook.com>
++ * Copyright (C) 2025 kaixinos <kaixinos@outlook.com>
 + */
 +
 +/dts-v1/;

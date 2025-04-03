@@ -1,4 +1,4 @@
-From add11a474c9ba313865f5aa506db044632a27a6c Mon Sep 17 00:00:00 2001
+From 894a38fb8a11a966f954830cbd0fd6035d7ff9ff Mon Sep 17 00:00:00 2001
 From: kaixinos <kaixinos@outlook.com>
 Date: Tue, 1 Apr 2025 23:42:21 +0800
 Subject: [PATCH] uboot add rk3399 fmx1 board
@@ -51,13 +51,13 @@ index 00000000..18b461ea
 +};
 diff --git a/arch/arm/dts/rk3399-fmx1.dts b/arch/arm/dts/rk3399-fmx1.dts
 new file mode 100644
-index 00000000..8a0d27bd
+index 00000000..5f7e3a55
 --- /dev/null
 +++ b/arch/arm/dts/rk3399-fmx1.dts
 @@ -0,0 +1,655 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
-+ * Copyright (c) 2025 kaixinos <kaixinos@outlook.com>
++ * Copyright (C) 2025 kaixinos <kaixinos@outlook.com>
 + */
 +
 +/dts-v1/;
