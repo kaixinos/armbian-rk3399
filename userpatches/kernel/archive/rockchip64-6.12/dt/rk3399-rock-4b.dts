@@ -229,6 +229,14 @@
 	status = "okay";
 };
 
+&vpu {
+	status = "okay";
+};
+
+&rga {
+	status = "okay";
+};
+
 &gmac {
 	assigned-clock-parents = <&clkin_gmac>;
 	assigned-clocks = <&cru SCLK_RMII_SRC>;
@@ -543,6 +551,10 @@
 	status = "okay";
 };
 
+&pwm0 {
+	status = "disabled";
+};
+
 &pwm2 {
 	status = "okay";
 };
@@ -566,7 +578,7 @@
 };
 
 &sdhci {
-	max-frequency = <150000000>;
+	//max-frequency = <150000000>;
 	bus-width = <8>;
 	mmc-hs200-1_8v;
 	non-removable;
@@ -574,6 +586,7 @@
 };
 
 &sdmmc {
+	clock-frequency = <150000000>;
 	max-frequency = <150000000>;
 	bus-width = <4>;
 	cap-mmc-highspeed;

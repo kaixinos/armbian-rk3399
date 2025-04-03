@@ -778,6 +778,10 @@
 	status = "disabled";
 };
 
+&i2s1 {
+	status = "disabled";
+};
+
 &i2s2 {
 	status = "okay";
 };

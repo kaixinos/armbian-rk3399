@@ -531,7 +531,9 @@
 };
 
 &i2c1 {
-	status = "disabled";
+	i2c-scl-rising-time-ns = <300>;
+	i2c-scl-falling-time-ns = <15>;
+	status = "okay";
 };
 
 &i2c3 {
@@ -629,6 +631,8 @@
 
 &pwm2 {
 	status = "okay";
+	pinctrl-names = "active";
+	pinctrl-0 = <&pwm2_pin>;
 };
 
 &saradc {
@@ -955,26 +959,6 @@
 		bt_host_wake_l: bt-host-wake-l {
 			rockchip,pins =
 				<0 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-	};
-
-	sdio0 {
-		sdio0_bus4: sdio0-bus4 {
-			rockchip,pins =
-				<2 RK_PC4 1 &pcfg_pull_up_20ma>,
-				<2 RK_PC5 1 &pcfg_pull_up_20ma>,
-				<2 RK_PC6 1 &pcfg_pull_up_20ma>,
-				<2 RK_PC7 1 &pcfg_pull_up_20ma>;
-		};
-
-		sdio0_cmd: sdio0-cmd {
-			rockchip,pins =
-				<2 RK_PD0 1 &pcfg_pull_up_20ma>;
-		};
-
-		sdio0_clk: sdio0-clk {
-			rockchip,pins =
-				<2 RK_PD1 1 &pcfg_pull_none_20ma>;
 		};
 	};
 };
