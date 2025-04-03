@@ -651,7 +651,7 @@
 &sdhci {
 	//max-frequency = <150000000>;
 	bus-width = <8>;
-	//mmc-hs200-1_8v;
+	mmc-hs200-1_8v;
 	//mmc-hs400-1_8v;
 	//mmc-hs400-enhanced-strobe;
 	//keep-power-in-suspend;
@@ -850,6 +850,10 @@
 };
 
 &i2s0 {
+	status = "disabled";
+};
+
+&i2s1 {
 	status = "disabled";
 };
 

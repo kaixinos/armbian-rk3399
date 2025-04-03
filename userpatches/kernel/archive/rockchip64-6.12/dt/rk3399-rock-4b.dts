@@ -520,6 +520,7 @@
 };
 
 &uart0 {
+	status = "okay";
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart0_xfer &uart0_cts &uart0_rts>;
 
@@ -727,10 +728,17 @@
 	status = "okay";
 };
 
-&hdmi_sound {
+&hdmi_in_vopb {
 	status = "okay";
 };
 
+&hdmi_in_vopl {
+	status = "disabled";
+};
+
+&hdmi_sound {
+	status = "okay";
+};
 
 &i2s0 {
 	pinctrl-0 = <&i2s0_2ch_bus>;
@@ -749,8 +757,7 @@
 };
 
 &i2s1 {
-	rockchip,playback-channels = <2>;
-	rockchip,capture-channels = <2>;
+	status = "disabled";
 };
 
 &i2s2 {
