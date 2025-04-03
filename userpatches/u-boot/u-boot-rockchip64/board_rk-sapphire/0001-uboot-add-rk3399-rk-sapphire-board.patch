@@ -1,20 +1,21 @@
-From 02616c9a67ebee5612d12f8cbfede8511748eb89 Mon Sep 17 00:00:00 2001
+From 350c9163e8c7707e5c28904fb8bed1ceee0f1174 Mon Sep 17 00:00:00 2001
 From: foo <foo@bar.com>
 Date: Fri, 22 Nov 2024 23:30:58 +0800
-Subject: [PATCH] uboot add rockchip rk3399 sapphire board
+Subject: [PATCH] uboot add rk3399 rk-sapphire board
 
+Signed-off-by: kaixinos <kaixinos@outlook.com>
 ---
- arch/arm/dts/Makefile                        |   1 +
+ arch/arm/dts/Makefile                       |   1 +
  arch/arm/dts/rk3399-rk-sapphire-u-boot.dtsi |  17 +
- arch/arm/dts/rk3399-rk-sapphire.dts         | 722 +++++++++++++++++++
+ arch/arm/dts/rk3399-rk-sapphire.dts         | 740 ++++++++++++++++++++
  configs/rk-sapphire-rk3399_defconfig        |  74 ++
- 4 files changed, 814 insertions(+)
+ 4 files changed, 832 insertions(+)
  create mode 100644 arch/arm/dts/rk3399-rk-sapphire-u-boot.dtsi
  create mode 100644 arch/arm/dts/rk3399-rk-sapphire.dts
  create mode 100644 configs/rk-sapphire-rk3399_defconfig
 
 diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
-index ee615e39..905dd87b 100644
+index ee615e39..2e07d358 100644
 --- a/arch/arm/dts/Makefile
 +++ b/arch/arm/dts/Makefile
 @@ -144,6 +144,7 @@ dtb-$(CONFIG_ROCKCHIP_RK3399) += \
@@ -27,13 +28,13 @@ index ee615e39..905dd87b 100644
  	rk3399-kobol-helios64.dtb \
 diff --git a/arch/arm/dts/rk3399-rk-sapphire-u-boot.dtsi b/arch/arm/dts/rk3399-rk-sapphire-u-boot.dtsi
 new file mode 100644
-index 00000000..c0bdcd0f
+index 00000000..fa0ac069
 --- /dev/null
 +++ b/arch/arm/dts/rk3399-rk-sapphire-u-boot.dtsi
 @@ -0,0 +1,17 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ * Copyright (C) 2019 Jagan Teki <jagan@amarulasolutions.com>
++ * Copyright (c) kaixinos <kaixinos@outlook.com>
 + */
 +
 +#include "rk3399-u-boot.dtsi"
@@ -41,7 +42,7 @@ index 00000000..c0bdcd0f
 +
 +/{
 +	chosen {
-+		u-boot,spl-boot-order = "same-as-spl", &sdhci, &sdmmc;
++		u-boot,spl-boot-order = "same-as-spl", &sdmmc, &sdhci;
 +	};
 +};
 +
@@ -50,23 +51,26 @@ index 00000000..c0bdcd0f
 +};
 diff --git a/arch/arm/dts/rk3399-rk-sapphire.dts b/arch/arm/dts/rk3399-rk-sapphire.dts
 new file mode 100644
-index 00000000..c9b92022
+index 00000000..b5a41065
 --- /dev/null
 +++ b/arch/arm/dts/rk3399-rk-sapphire.dts
-@@ -0,0 +1,722 @@
+@@ -0,0 +1,740 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (c) 2025 kaixinos <kaixinos@outlook.com>
++ */
 +
 +/dts-v1/;
-+
 +#include <dt-bindings/input/linux-event-codes.h>
 +#include "rk3399.dtsi"
 +#include "rk3399-opp.dtsi"
 +
 +/ {
-+	model = "RK3399 Sapphire Air";
++	model = "Rockchip RK3399 Sapphire";
 +	compatible = "rk3399,rk-sapphire", "rockchip,rk3399";
 +
 +	aliases {
++		ethernet0 = &gmac;
 +		mmc0 = &sdio0;
 +		mmc1 = &sdmmc;
 +		mmc2 = &sdhci;
@@ -166,9 +170,9 @@ index 00000000..c9b92022
 +		compatible = "gpio-keys";
 +		autorepeat;
 +
-+		power {
++		key-power {
 +			gpios = <&gpio0 RK_PA5 GPIO_ACTIVE_LOW>;
-+			label = "GPIO Power Key";
++			label = "GPIO Key Power";
 +			linux,code = <KEY_POWER>;
 +			debounce-interval = <100>;
 +			pinctrl-names = "default";
@@ -243,6 +247,14 @@ index 00000000..c9b92022
 +	status = "okay";
 +};
 +
++&vpu {
++	status = "okay";
++};
++
++&rga {
++	status = "okay";
++};
++
 +&gmac {
 +	assigned-clock-parents = <&clkin_gmac>;
 +	assigned-clocks = <&cru SCLK_RMII_SRC>;
@@ -250,26 +262,13 @@ index 00000000..c9b92022
 +	phy-supply = <&vcc3v3_s3>;
 +	phy-mode = "rgmii";
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&rgmii_pins>, <&phy_intb>, <&phy_rstb>;
-+	phy-handle = <&rtl8211e>;
++	pinctrl-0 = <&rgmii_pins &rgmii_phy_reset>;
++	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
++	snps,reset-active-low;
++	snps,reset-delays-us = <0 10000 50000>;
 +	tx_delay = <0x28>;
 +	rx_delay = <0x11>;
 +	status = "okay";
-+
-+	mdio {
-+		compatible = "snps,dwmac-mdio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		rtl8211e: ethernet-phy@1 {
-+			reg = <1>;
-+			interrupt-parent = <&gpio3>;
-+			interrupts = <RK_PB2 IRQ_TYPE_LEVEL_LOW>;
-+			reset-assert-us = <10000>;
-+			reset-deassert-us = <30000>;
-+			reset-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
-+		};
-+	};
 +};
 +
 +&i2c0 {
@@ -481,7 +480,8 @@ index 00000000..c9b92022
 +		reg = <0x40>;
 +		fcs,suspend-voltage-selector = <1>;
 +		//pinctrl-names = "default";
-+		//pinctrl-0 = <&cpu_b_sleep>;
++		//pinctrl-0 = <&vsel1_pin>;
++		//regulator-compatible = "fan53555-reg";
 +		regulator-name = "vdd_cpu_b";
 +		regulator-min-microvolt = <712500>;
 +		regulator-max-microvolt = <1500000>;
@@ -500,7 +500,8 @@ index 00000000..c9b92022
 +		reg = <0x41>;
 +		fcs,suspend-voltage-selector = <1>;
 +		//pinctrl-names = "default";
-+		//pinctrl-0 = <&gpu_sleep>;
++		//pinctrl-0 = <&vsel2_pin>;
++		//regulator-compatible = "fan53555-reg";
 +		regulator-name = "vdd_gpu";
 +		regulator-min-microvolt = <712500>;
 +		regulator-max-microvolt = <1500000>;
@@ -515,19 +516,31 @@ index 00000000..c9b92022
 +	};
 +};
 +
++&i2c1 {
++	i2c-scl-rising-time-ns = <300>;
++	i2c-scl-falling-time-ns = <15>;
++	status = "okay";
++};
++
++&i2c3 {
++	i2c-scl-rising-time-ns = <450>;
++	i2c-scl-falling-time-ns = <15>;
++	status = "okay";
++};
++
 +&i2c4 {
 +	status = "okay";
 +	i2c-scl-rising-time-ns = <160>;
 +	i2c-scl-falling-time-ns = <30>;
 +	clock-frequency = <400000>;
 +
-+	fusb0: fusb302@22 {
++	usbc0: fusb302@22 {
 +		compatible = "fcs,fusb302";
 +		reg = <0x22>;
 +		interrupt-parent = <&gpio1>;
 +		interrupts = <RK_PA2 IRQ_TYPE_LEVEL_LOW>;
 +		pinctrl-names = "default";
-+		pinctrl-0 = <&fusb0_int>;
++		pinctrl-0 = <&usbc0_int>;
 +		vbus-supply = <&vcc5v0_typec>;
 +	};
 +};
@@ -535,6 +548,7 @@ index 00000000..c9b92022
 +&uart0 {
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&uart0_xfer &uart0_cts &uart0_rts>;
++	status = "okay";
 +};
 +
 +&uart2 {
@@ -570,6 +584,7 @@ index 00000000..c9b92022
 +};
 +
 +&sdhci {
++	//max-frequency = <150000000>;
 +	bus-width = <8>;
 +	mmc-hs400-1_8v;
 +	mmc-hs400-enhanced-strobe;
@@ -578,17 +593,19 @@ index 00000000..c9b92022
 +};
 +
 +&sdmmc {
++	clock-frequency = <150000000>;
++	max-frequency = <150000000>;
 +	bus-width = <4>;
 +	cap-mmc-highspeed;
 +	cap-sd-highspeed;
 +	disable-wp;
-+	max-frequency = <150000000>;
-+	clock-frequency = <150000000>;
++	sd-uhs-sdr104;
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_bus4 &sdmmc0_det_l>;
++	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_bus4 &sdmmc_cd>;
 +	cd-gpios = <&gpio0 RK_PA7 GPIO_ACTIVE_LOW>;
 +	vmmc-supply = <&vcc3v0_sd>;
 +	vqmmc-supply = <&vcc_sdio>;
++	//card-detect-delay = <800>;
 +	status = "okay";
 +};
 +
@@ -699,8 +716,20 @@ index 00000000..c9b92022
 +	status = "okay";
 +};
 +
++&hdmi_in_vopb {
++	status = "okay";
++};
++
++&hdmi_in_vopl {
++	status = "disabled";
++};
++
 +&hdmi_sound {
 +	status = "okay";
++};
++
++&i2s0 {
++	status = "disabled";
 +};
 +
 +&i2s2 {
@@ -714,27 +743,22 @@ index 00000000..c9b92022
 +				<1 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up>;
 +		};
 +/*
-+		cpu_b_sleep: cpu-b-sleep {
++		vsel1_pin: vsel1-pin {
 +			rockchip,pins =
 +				<1 RK_PC1 RK_FUNC_GPIO &pcfg_pull_down>;
 +		};
 +
-+		gpu_sleep: gpu-sleep {
++		vsel2_pin: vsel2-pin {
 +			rockchip,pins =
 +				<1 RK_PB6 RK_FUNC_GPIO &pcfg_pull_down>;
 +		};
 +*/
 +	};
 +
-+	sdmmc {
++	sd {
 +		sdmmc0_pwr_h: sdmmc0-pwr-h {
 +			rockchip,pins =
 +				<0 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
-+		sdmmc0_det_l: sdmmc0-det-l {
-+			rockchip,pins =
-+				<0 RK_PA7 RK_FUNC_GPIO &pcfg_pull_up>;
 +		};
 +	};
 +
@@ -746,7 +770,7 @@ index 00000000..c9b92022
 +	};
 +
 +	usb-typec {
-+		fusb0_int: fusb0-int {
++		usbc0_int: usbc0-int {
 +			rockchip,pins =
 +				<1 RK_PA2 RK_FUNC_GPIO &pcfg_pull_up>;
 +		};
@@ -758,14 +782,9 @@ index 00000000..c9b92022
 +	};
 +
 +	gmac {
-+		phy_intb: phy-intb {
++		rgmii_phy_reset: rgmii-phy-reset {
 +			rockchip,pins =
-+				<3 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>;
-+		};
-+
-+		phy_rstb: phy-rstb {
-+			rockchip,pins =
-+				<3 RK_PB7 RK_FUNC_GPIO &pcfg_pull_none>;
++				<3 RK_PB7 RK_FUNC_GPIO &pcfg_output_low>;
 +		};
 +	};
 +
@@ -778,7 +797,7 @@ index 00000000..c9b92022
 +};
 diff --git a/configs/rk-sapphire-rk3399_defconfig b/configs/rk-sapphire-rk3399_defconfig
 new file mode 100644
-index 00000000..ba64ac44
+index 00000000..fa1c5a06
 --- /dev/null
 +++ b/configs/rk-sapphire-rk3399_defconfig
 @@ -0,0 +1,74 @@
