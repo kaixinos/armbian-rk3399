@@ -1,4 +1,4 @@
-From 894a38fb8a11a966f954830cbd0fd6035d7ff9ff Mon Sep 17 00:00:00 2001
+From 56c30417edcef4a96d25c75a306b1766ff3479d9 Mon Sep 17 00:00:00 2001
 From: kaixinos <kaixinos@outlook.com>
 Date: Tue, 1 Apr 2025 23:42:21 +0800
 Subject: [PATCH] uboot add rk3399 fmx1 board
@@ -7,9 +7,9 @@ Signed-off-by: kaixinos <kaixinos@outlook.com>
 ---
  arch/arm/dts/Makefile                |   1 +
  arch/arm/dts/rk3399-fmx1-u-boot.dtsi |  17 +
- arch/arm/dts/rk3399-fmx1.dts         | 655 +++++++++++++++++++++++++++
- configs/fmx1-rk3399_defconfig        |  79 ++++
- 4 files changed, 752 insertions(+)
+ arch/arm/dts/rk3399-fmx1.dts         | 748 +++++++++++++++++++++++++++
+ configs/fmx1-rk3399_defconfig        |  79 +++
+ 4 files changed, 845 insertions(+)
  create mode 100644 arch/arm/dts/rk3399-fmx1-u-boot.dtsi
  create mode 100644 arch/arm/dts/rk3399-fmx1.dts
  create mode 100644 configs/fmx1-rk3399_defconfig
@@ -51,10 +51,10 @@ index 00000000..18b461ea
 +};
 diff --git a/arch/arm/dts/rk3399-fmx1.dts b/arch/arm/dts/rk3399-fmx1.dts
 new file mode 100644
-index 00000000..5f7e3a55
+index 00000000..45639ac7
 --- /dev/null
 +++ b/arch/arm/dts/rk3399-fmx1.dts
-@@ -0,0 +1,655 @@
+@@ -0,0 +1,748 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright (C) 2025 kaixinos <kaixinos@outlook.com>
@@ -67,7 +67,7 @@ index 00000000..5f7e3a55
 +#include "rk3399-opp.dtsi"
 +
 +/ {
-+	model = "RK3399 FMX1 Board";
++	model = "RK3399 FMX1";
 +	compatible = "rk3399,fmx1", "rockchip,rk3399";
 +
 +	aliases {
@@ -142,7 +142,7 @@ index 00000000..5f7e3a55
 +
 +	vdd_log: vdd-log {
 +		compatible = "pwm-regulator";
-+		pwms = <&pwm2 0 25000 1>;
++		pwms = <&pwm2 0 25000 0>;
 +		regulator-name = "vdd_log";
 +		regulator-always-on;
 +		regulator-boot-on;
@@ -157,6 +157,52 @@ index 00000000..5f7e3a55
 +		regulator-name = "vcc3v3_lan";
 +		regulator-always-on;
 +		regulator-boot-on;
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		vin-supply = <&vcc3v3_sys>;
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++		autorepeat;
++		pinctrl-names = "default";
++		pinctrl-0 = <&power_key>;
++
++		key-power {
++			gpios = <&gpio0 RK_PA5 GPIO_ACTIVE_LOW>;
++			label = "GPIO Key Power";
++			linux,code = <KEY_POWER>;
++			debounce-interval = <100>;
++			wakeup-source;
++		};
++	};
++
++	adc-keys {
++		compatible = "adc-keys";
++		io-channels = <&saradc 1>;
++		io-channel-names = "buttons";
++		keyup-threshold-microvolt = <1800000>;
++		poll-interval = <100>;
++
++		vol-up-key {
++			label = "volume up";
++			linux,code = <KEY_VOLUMEUP>;
++			press-threshold-microvolt = <1750>;
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&user_led0>;
++
++		/* USER_LED */
++		led-0 {
++			label = "red:work";
++			gpios = <&gpio1 RK_PA7 GPIO_ACTIVE_HIGH>;
++			default-state = "on";
++			//linux,default-trigger = "heartbeat";
++		};
 +	};
 +
 +	clkin_gmac: external-gmac-clock {
@@ -218,7 +264,7 @@ index 00000000..5f7e3a55
 +	phy-supply = <&vcc3v3_lan>;
 +	phy-mode = "rgmii";
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&rgmii_pins>;
++	pinctrl-0 = <&rgmii_pins &rgmii_phy_reset>;
 +	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
 +	snps,reset-active-low;
 +	snps,reset-delays-us = <0 10000 50000>;
@@ -351,6 +397,7 @@ index 00000000..5f7e3a55
 +				regulator-boot-on;
 +				regulator-min-microvolt = <1800000>;
 +				regulator-max-microvolt = <3300000>;
++
 +				regulator-state-mem {
 +					regulator-on-in-suspend;
 +					regulator-suspend-microvolt = <3300000>;
@@ -471,7 +518,9 @@ index 00000000..5f7e3a55
 +};
 +
 +&i2c1 {
-+	status = "disabled";
++	i2c-scl-rising-time-ns = <300>;
++	i2c-scl-falling-time-ns = <15>;
++	status = "okay";
 +};
 +
 +&i2c3 {
@@ -481,14 +530,26 @@ index 00000000..5f7e3a55
 +};
 +
 +&i2c4 {
++	status = "okay";
 +	i2c-scl-rising-time-ns = <160>;
 +	i2c-scl-falling-time-ns = <30>;
-+	status = "okay";
++	clock-frequency = <400000>;
++
++	usbc0: fusb302@22 {
++		compatible = "fcs,fusb302";
++		reg = <0x22>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <RK_PA2 IRQ_TYPE_LEVEL_LOW>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&usbc0_int>;
++		vbus-supply = <&vcc5v0_typec>;
++	};
 +};
 +
 +&uart0 {
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&uart0_xfer &uart0_cts &uart0_rts>;
++	status = "okay";
 +};
 +
 +&uart2 {
@@ -500,6 +561,12 @@ index 00000000..5f7e3a55
 +};
 +
 +&pwm2 {
++	status = "okay";
++	pinctrl-names = "active";
++	pinctrl-0 = <&pwm2_pin>;
++};
++
++&pwm3 {
 +	status = "okay";
 +};
 +
@@ -549,7 +616,7 @@ index 00000000..5f7e3a55
 +};
 +
 +&sdio0 {
-+	status = "disabled";
++	status = "okay";
 +};
 +
 +&pcie_phy {
@@ -616,7 +683,7 @@ index 00000000..5f7e3a55
 +
 +&usbdrd_dwc3_0 {
 +	status = "okay";
-+	dr_mode = "host";
++	dr_mode = "otg";
 +};
 +
 +&usbdrd3_1 {
@@ -706,7 +773,33 @@ index 00000000..5f7e3a55
 +	usb-typec {
 +		vcc5v0_typec_en: vcc5v0-typec-en {
 +			rockchip,pins =
-+				<1 RK_PA3 RK_FUNC_GPIO &pcfg_pull_up>;
++				<1 RK_PA3 RK_FUNC_GPIO &pcfg_pull_down>;
++		};
++
++		usbc0_int: usbc0-int {
++			rockchip,pins =
++				<1 RK_PA2 RK_FUNC_GPIO &pcfg_pull_up>;
++		};
++	};
++
++	rockchip-key {
++		power_key: power-key {
++			rockchip,pins =
++				<0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_up>;
++		};
++	};
++
++	leds {
++		user_led0: user-led0 {
++			rockchip,pins =
++				<1 RK_PA7 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	gmac {
++		rgmii_phy_reset: rgmii-phy-reset {
++			rockchip,pins =
++				<3 RK_PB7 RK_FUNC_GPIO &pcfg_output_low>;
 +		};
 +	};
 +};

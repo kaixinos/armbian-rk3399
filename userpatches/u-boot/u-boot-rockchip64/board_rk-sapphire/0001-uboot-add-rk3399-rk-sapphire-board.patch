@@ -1,4 +1,4 @@
-From 0c08e0fc920ef8ae240b9d986bf95d92c1cf6e4b Mon Sep 17 00:00:00 2001
+From a23ddbfb824af4b957e42e010310dc5672cf6bb3 Mon Sep 17 00:00:00 2001
 From: foo <foo@bar.com>
 Date: Fri, 22 Nov 2024 23:30:58 +0800
 Subject: [PATCH] uboot add rk3399 rk-sapphire board
@@ -7,9 +7,9 @@ Signed-off-by: kaixinos <kaixinos@outlook.com>
 ---
  arch/arm/dts/Makefile                       |   1 +
  arch/arm/dts/rk3399-rk-sapphire-u-boot.dtsi |  17 +
- arch/arm/dts/rk3399-rk-sapphire.dts         | 740 ++++++++++++++++++++
+ arch/arm/dts/rk3399-rk-sapphire.dts         | 747 ++++++++++++++++++++
  configs/rk-sapphire-rk3399_defconfig        |  74 ++
- 4 files changed, 832 insertions(+)
+ 4 files changed, 839 insertions(+)
  create mode 100644 arch/arm/dts/rk3399-rk-sapphire-u-boot.dtsi
  create mode 100644 arch/arm/dts/rk3399-rk-sapphire.dts
  create mode 100644 configs/rk-sapphire-rk3399_defconfig
@@ -51,10 +51,10 @@ index 00000000..6b9030aa
 +};
 diff --git a/arch/arm/dts/rk3399-rk-sapphire.dts b/arch/arm/dts/rk3399-rk-sapphire.dts
 new file mode 100644
-index 00000000..01d6e1e1
+index 00000000..f2218840
 --- /dev/null
 +++ b/arch/arm/dts/rk3399-rk-sapphire.dts
-@@ -0,0 +1,740 @@
+@@ -0,0 +1,747 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright (C) 2025 kaixinos <kaixinos@outlook.com>
@@ -395,7 +395,6 @@ index 00000000..01d6e1e1
 +				regulator-boot-on;
 +				regulator-min-microvolt = <1800000>;
 +				regulator-max-microvolt = <3300000>;
-+				//regulator-init-microvolt = <3000000>;
 +
 +				regulator-state-mem {
 +					regulator-on-in-suspend;
@@ -565,6 +564,10 @@ index 00000000..01d6e1e1
 +	pinctrl-0 = <&pwm2_pin_pull_down>;
 +};
 +
++&pwm3 {
++	status = "okay";
++};
++
 +&saradc {
 +	status = "okay";
 +	vref-supply = <&vcca1v8_s3>;
@@ -732,6 +735,10 @@ index 00000000..01d6e1e1
 +	status = "disabled";
 +};
 +
++&i2s1 {
++	status = "disabled";
++};
++
 +&i2s2 {
 +	status = "okay";
 +};
@@ -770,21 +777,14 @@ index 00000000..01d6e1e1
 +	};
 +
 +	usb-typec {
-+		usbc0_int: usbc0-int {
-+			rockchip,pins =
-+				<1 RK_PA2 RK_FUNC_GPIO &pcfg_pull_up>;
-+		};
-+
 +		vcc5v0_typec_en: vcc5v0-typec-en {
 +			rockchip,pins =
 +				<2 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>;
 +		};
-+	};
 +
-+	gmac {
-+		rgmii_phy_reset: rgmii-phy-reset {
++		usbc0_int: usbc0-int {
 +			rockchip,pins =
-+				<3 RK_PB7 RK_FUNC_GPIO &pcfg_output_low>;
++				<1 RK_PA2 RK_FUNC_GPIO &pcfg_pull_up>;
 +		};
 +	};
 +
@@ -792,6 +792,13 @@ index 00000000..01d6e1e1
 +		power_key: power-key {
 +			rockchip,pins =
 +				<0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_up>;
++		};
++	};
++
++	gmac {
++		rgmii_phy_reset: rgmii-phy-reset {
++			rockchip,pins =
++				<3 RK_PB7 RK_FUNC_GPIO &pcfg_output_low>;
 +		};
 +	};
 +};
