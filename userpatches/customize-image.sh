@@ -24,6 +24,8 @@ Main() {
 		chmod 755 "$apt_file"
 	fi
 
+	apt install -y bash-completion net-tools vim
+
 	case $RELEASE in
 		stretch)
 			# your code here
