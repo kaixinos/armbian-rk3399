@@ -24,6 +24,7 @@ Main() {
 		chmod 755 "$apt_file"
 	fi
 
+	apt update
 	apt install -y bash-completion net-tools vim
 
 	case $RELEASE in
