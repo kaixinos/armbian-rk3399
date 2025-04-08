@@ -26,6 +26,7 @@ Main() {
 
 	apt update
 	apt install -y bash-completion net-tools vim
+	apt clean
 
 	case $RELEASE in
 		stretch)
