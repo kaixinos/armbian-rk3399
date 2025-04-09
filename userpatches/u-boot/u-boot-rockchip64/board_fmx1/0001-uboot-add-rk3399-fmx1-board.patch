@@ -1,4 +1,4 @@
-From 56c30417edcef4a96d25c75a306b1766ff3479d9 Mon Sep 17 00:00:00 2001
+From 50eac04d14c746e00549a867d1f8df77442b6d75 Mon Sep 17 00:00:00 2001
 From: kaixinos <kaixinos@outlook.com>
 Date: Tue, 1 Apr 2025 23:42:21 +0800
 Subject: [PATCH] uboot add rk3399 fmx1 board
@@ -28,7 +28,7 @@ index ee615e39..44ae6a4f 100644
  	rk3399-kobol-helios64.dtb \
 diff --git a/arch/arm/dts/rk3399-fmx1-u-boot.dtsi b/arch/arm/dts/rk3399-fmx1-u-boot.dtsi
 new file mode 100644
-index 00000000..18b461ea
+index 00000000..e237a7a4
 --- /dev/null
 +++ b/arch/arm/dts/rk3399-fmx1-u-boot.dtsi
 @@ -0,0 +1,17 @@
@@ -40,7 +40,7 @@ index 00000000..18b461ea
 +#include "rk3399-u-boot.dtsi"
 +#include "rk3399-sdram-lpddr3-samsung-4GB-1866.dtsi"
 +
-+/{
++/ {
 +	chosen {
 +		u-boot,spl-boot-order = "same-as-spl", &sdmmc, &sdhci;
 +	};

@@ -1,4 +1,4 @@
-From a23ddbfb824af4b957e42e010310dc5672cf6bb3 Mon Sep 17 00:00:00 2001
+From 3de0c6805fc3ee14d2a095f3a92479656c0a91b9 Mon Sep 17 00:00:00 2001
 From: foo <foo@bar.com>
 Date: Fri, 22 Nov 2024 23:30:58 +0800
 Subject: [PATCH] uboot add rk3399 rk-sapphire board
@@ -28,7 +28,7 @@ index ee615e39..2e07d358 100644
  	rk3399-kobol-helios64.dtb \
 diff --git a/arch/arm/dts/rk3399-rk-sapphire-u-boot.dtsi b/arch/arm/dts/rk3399-rk-sapphire-u-boot.dtsi
 new file mode 100644
-index 00000000..6b9030aa
+index 00000000..9d124398
 --- /dev/null
 +++ b/arch/arm/dts/rk3399-rk-sapphire-u-boot.dtsi
 @@ -0,0 +1,17 @@
@@ -40,14 +40,14 @@ index 00000000..6b9030aa
 +#include "rk3399-u-boot.dtsi"
 +#include "rk3399-sdram-lpddr3-samsung-4GB-1866.dtsi"
 +
-+/{
++/ {
 +	chosen {
 +		u-boot,spl-boot-order = "same-as-spl", &sdmmc, &sdhci;
 +	};
 +};
 +
 +&sdmmc {
-+	pinctrl-0 = <&sdmmc_bus4 &sdmmc_clk &sdmmc_cmd &sdmmc_cd>;
++	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_bus4 &sdmmc_cd>;
 +};
 diff --git a/arch/arm/dts/rk3399-rk-sapphire.dts b/arch/arm/dts/rk3399-rk-sapphire.dts
 new file mode 100644
