@@ -1,4 +1,4 @@
-name: build-all-minimal
+name: A2-build-all-server
 
 on:
   workflow_dispatch:
@@ -107,7 +107,7 @@ jobs:
           pushd build
           ./compile.sh build BOARD=${{ matrix.board }} \
           BRANCH=${{ inputs.branch }} \
-          BUILD_DESKTOP=no BUILD_MINIMAL=yes \
+          BUILD_DESKTOP=no BUILD_MINIMAL=no \
           KERNEL_CONFIGURE=no \
           RELEASE=${{ matrix.release }} \
           COMPRESS_OUTPUTIMAGE=sha,img,xz \
