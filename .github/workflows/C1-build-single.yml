@@ -1,4 +1,4 @@
-name: B1-build-single
+name: C1-build-single
 
 on:
   workflow_dispatch:
