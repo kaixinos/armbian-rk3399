@@ -157,7 +157,7 @@ jobs:
           echo "buildtime=$(date +"%Y.%m")" >> $GITHUB_ENV
 
       - name: Upload images
-        uses: ncipollo/release-action@main
+        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
         if: success()
         with:
           tag: "${{ inputs.vendor }}_${{ inputs.version }}_${{ matrix.release }}_${{ inputs.branch }}_desktop_b${{ env.buildtime }}"
@@ -165,6 +165,8 @@ jobs:
           allowUpdates: true
           removeArtifacts: false
           replacesArtifacts: true
+          makeLatest: true
+          artifactErrorsFailBuild: true
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             ### Armbian Image information
