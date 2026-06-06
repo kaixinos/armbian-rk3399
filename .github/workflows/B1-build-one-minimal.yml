@@ -28,10 +28,9 @@ on:
         required: true
         type: choice
         options:
-          - v25.11
-          - v25.08
+          - v26.05
           - main
-        default: v25.11
+        default: v26.05
 
       branch:
         description: 'Branch'
@@ -68,9 +67,9 @@ jobs:
     strategy:
       matrix:
         release:
-          - bookworm
-          - jammy
+          - trixie
           - noble
+          - resolute
 
     steps:
 

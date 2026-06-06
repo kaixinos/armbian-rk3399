@@ -28,10 +28,9 @@ on:
         required: true
         type: choice
         options:
-          - v25.11
-          - v25.08
+          - v26.05
           - main
-        default: v25.11
+        default: v26.05
 
       branch:
         description: 'Branch'
@@ -48,10 +47,10 @@ on:
         required: true
         type: choice
         options:
-          - bookworm
-          - jammy
+          - trixie
           - noble
-        default: bookworm
+          - resolute
+        default: trixie
 
       system:
         description: 'System Type'
@@ -72,6 +71,8 @@ on:
           - cinnamon
           - gnome
           - i3-wm
+          - kde-plasma
+          - mate
         default: xfce
 
       bspfreeze:
@@ -142,8 +143,6 @@ jobs:
           cp -rvf userpatches build/
 
       - name: Set up system type
-        env:
-          DESKTOP_APPGROUPS: "browsers chat desktop_tools editors email internet multimedia office programming remote_desktop"
         run: |
           if [ "${{ inputs.system }}" == "minimal" ]; then
             echo "Setting up for minimal system..."
@@ -153,9 +152,7 @@ jobs:
             SYSTEM_ARGS="BUILD_DESKTOP=no BUILD_MINIMAL=no"
           elif [ "${{ inputs.system }}" == "desktop" ]; then
             echo "Setting up for desktop system..."
-            SYSTEM_ARGS="BUILD_DESKTOP=yes BUILD_MINIMAL=no DESKTOP_ENVIRONMENT=${{ inputs.desktop }} \
-                  DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base \
-                  DESKTOP_APPGROUPS_SELECTED=\"${{ env.DESKTOP_APPGROUPS }}\""
+            SYSTEM_ARGS="BUILD_DESKTOP=yes BUILD_MINIMAL=no DESKTOP_ENVIRONMENT=${{ inputs.desktop }} DESKTOP_TIER=minimal"
           fi
           echo "BUILD_ARGS=$SYSTEM_ARGS" >> $GITHUB_ENV
 

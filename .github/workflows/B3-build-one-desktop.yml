@@ -28,10 +28,9 @@ on:
         required: true
         type: choice
         options:
-          - v25.11
-          - v25.08
+          - v26.05
           - main
-        default: v25.11
+        default: v26.05
 
       branch:
         description: 'Branch'
@@ -68,14 +67,16 @@ jobs:
     strategy:
       matrix:
         release:
-          - bookworm
-          - jammy
+          - trixie
           - noble
+          - resolute
         desktop:
           - xfce
           - cinnamon
           - gnome
           - i3-wm
+          - kde-plasma
+          - mate
 
     steps:
 
@@ -123,13 +124,9 @@ jobs:
           cp -rvf userpatches build/
 
       - name: Set up system type
-        env:
-          DESKTOP_APPGROUPS: "browsers chat desktop_tools editors email internet multimedia office programming remote_desktop"
         run: |
           echo "Setting up for desktop system..."
-          SYSTEM_ARGS="BUILD_DESKTOP=yes BUILD_MINIMAL=no DESKTOP_ENVIRONMENT=${{ matrix.desktop }} \
-                DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base \
-                DESKTOP_APPGROUPS_SELECTED=\"${{ env.DESKTOP_APPGROUPS }}\""
+          SYSTEM_ARGS="BUILD_DESKTOP=yes BUILD_MINIMAL=no DESKTOP_ENVIRONMENT=${{ matrix.desktop }} DESKTOP_TIER=minimal"
           echo "BUILD_ARGS=$SYSTEM_ARGS" >> $GITHUB_ENV
 
       - name: Show environment
