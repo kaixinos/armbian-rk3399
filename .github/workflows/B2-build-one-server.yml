@@ -21,6 +21,7 @@ on:
           - dg3399
           - fine3399a
           - ad-b03
+          - zimo
         default: "rk-sapphire"
 
       version:

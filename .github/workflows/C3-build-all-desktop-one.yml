@@ -72,6 +72,7 @@ jobs:
           - dg3399
           - fine3399a
           - ad-b03
+          - zimo
         release:
           - trixie
           - noble
