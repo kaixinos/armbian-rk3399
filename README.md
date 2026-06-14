@@ -15,5 +15,6 @@
 | h339pc | DDR3 | PE025-125 | K019-CW43-DW |
 | fine3399a | LPDDR4 | S5RG2G20CMS-CGCJ | AP6236 |
 | ad-b03 | LPDDR4 | K4F6E3S4HM-GGCJ | AP6256 |
+| zimo | LPDDR4 | H9HCNNN8KUMLHR-NME | - |
 
 DDR Part Number* : Different hardware versions may have different Part Numbers.
