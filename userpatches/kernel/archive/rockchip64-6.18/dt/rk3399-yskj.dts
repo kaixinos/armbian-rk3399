@@ -74,13 +74,13 @@
 		vin-supply = <&vcc5v0_sys>;
 	};
 
-	vcc5v0_typec: vcc5v0-typec {
+	vbus_typec: regulator-vbus-typec {
 		compatible = "regulator-fixed";
-		regulator-name = "vcc5v0_typec";
+		regulator-name = "vbus_typec";
 		enable-active-high;
 		gpio = <&gpio1 RK_PA3 GPIO_ACTIVE_HIGH>;
 		pinctrl-names = "default";
-		pinctrl-0 = <&vcc5v0_typec_en>;
+		pinctrl-0 = <&vbus_typec_en>;
 		vin-supply = <&vcc5v0_sys>;
 	};
 
@@ -136,6 +136,14 @@
 		clock-frequency = <125000000>;
 		clock-output-names = "clkin_gmac";
 		#clock-cells = <0>;
+	};
+
+	typec_extcon_bridge: typec-extcon {
+		compatible = "linux,typec-extcon-bridge";
+		usb-role-switch;
+		orientation-switch;
+		mode-switch;
+		svid = /bits/ 16 <0xff01>;
 	};
 };
 
@@ -489,22 +497,30 @@
 		interrupts = <RK_PA2 IRQ_TYPE_LEVEL_LOW>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&usbc0_int>;
-		vbus-supply = <&vcc5v0_typec>;
+		vbus-supply = <&vbus_typec>;
+
+		usb-role-switch = <&typec_extcon_bridge>;
+		extcon = <&typec_extcon_bridge>;
 
 		connector {
 			compatible = "usb-c-connector";
 			label = "USB-C";
-			op-sink-microwatt = <1000000>;
 			power-role = "dual";
 			data-role = "dual";
-			sink-pdos =
-				<PDO_FIXED(5000, 2500, PDO_FIXED_USB_COMM)>;
-			source-pdos =
-				<PDO_FIXED(5000, 1400, PDO_FIXED_USB_COMM)>;
 			try-power-role = "sink";
+			source-pdos = <PDO_FIXED(5000, 1200, PDO_FIXED_USB_COMM)>;
+			sink-pdos = <PDO_FIXED(5000, 500, PDO_FIXED_USB_COMM)>;
+			op-sink-microwatt = <5000000>;
 
-			extcon-cables = <1 2 5 6 9 10 12 44>;
-			typec-altmodes = <0xff01 1 0x001c0000 1>;
+			mode-switch = <&typec_extcon_bridge>;
+			orientation-switch = <&typec_extcon_bridge>;
+
+			altmodes {
+				dp {
+					svid = /bits/ 16 <0xff01>;
+					vdo = <0x1c46>;
+				};
+			};
 
 			ports {
 				#address-cells = <1>;
@@ -529,7 +545,7 @@
 
 				port@2 {
 					reg = <2>;
-					usb_con_sbu: endpoint {
+					usb_con_dp: endpoint {
 						remote-endpoint =
 							<&tcphy0_typec_dp>;
 					};
@@ -603,19 +619,19 @@
 
 &cdn_dp {
 	status = "okay";
-	extcon = <&usbc0>;
+	extcon = <&typec_extcon_bridge>;
 	phys = <&tcphy0_dp>;
 };
 
 &tcphy0 {
 	status = "okay";
-	extcon = <&usbc0>;
+	extcon = <&typec_extcon_bridge>;
 };
 
 &tcphy0_dp {
 	port {
 		tcphy0_typec_dp: endpoint {
-			remote-endpoint = <&usb_con_sbu>;
+			remote-endpoint = <&usb_con_dp>;
 		};
 	};
 };
@@ -634,21 +650,22 @@
 
 &u2phy0 {
 	status = "okay";
-	extcon = <&usbc0>;
+	extcon = <&typec_extcon_bridge>;
+	extcon,ignore-usb; /* let extcon handle role switch */
 
 	u2phy0_otg: otg-port {
 		status = "okay";
+
+		port {
+			u2phy0_typec_hs: endpoint {
+				remote-endpoint = <&usb_con_hs>;
+			};
+		};
 	};
 
 	u2phy0_host: host-port {
 		status = "okay";
 		phy-supply = <&vcc5v0_host>;
-	};
-
-	port {
-		u2phy0_typec_hs: endpoint {
-			remote-endpoint = <&usb_con_hs>;
-		};
 	};
 };
 
@@ -687,8 +704,9 @@
 
 &usbdrd_dwc3_0 {
 	status = "okay";
-	extcon = <&usbc0>;
-	dr_mode = "otg";
+	dr_mode = "otg"; /* MUST be otg so phy can reset properly */
+	extcon = <&typec_extcon_bridge>;
+	snps,usb3-phy-reset-quirk;
 };
 
 &usbdrd3_1 {
@@ -777,7 +795,7 @@
 	};
 
 	usb-typec {
-		vcc5v0_typec_en: vcc5v0-typec-en {
+		vbus_typec_en: vbus-typec-en {
 			rockchip,pins =
 				<1 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
